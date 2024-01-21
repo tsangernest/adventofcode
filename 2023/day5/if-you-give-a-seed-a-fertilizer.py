@@ -27,7 +27,7 @@ def get_file_data_from_args():
     parser.add_argument("f",  type=FileType("r", encoding="utf-8"))
     arg_file = parser.parse_args().f
 
-    seeds: list[int] = arg_file.readline().split(sep=":", maxsplit=1)[1]
+    seeds: list[int] = arg_file.readline().strip().split(sep=":", maxsplit=1)[1].strip()
 
     # skips first blank line because yeah
     arg_file.readline()
@@ -68,15 +68,23 @@ def get_file_data_from_args():
             dest = []
             src = []
             rng = []
+    data.append(
+        Category(
+            id=cat_id,
+            category_name=name,
+            destination=dest,
+            source=src,
+            range=rng,
+        ),
+    )
 
-            continue
-    pp.pprint(data)
-
-    return seeds
+    return seeds, data
 
 
 def main():
-    file_data = get_file_data_from_args()
+    seeds, data = get_file_data_from_args()
+    pp.pprint(seeds)
+    pp.pprint(data)
 
 
     print(f"\n\n***End of Processing***\n")
