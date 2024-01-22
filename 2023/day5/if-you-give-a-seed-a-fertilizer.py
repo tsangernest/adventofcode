@@ -27,7 +27,12 @@ def get_file_data_from_args():
     parser.add_argument("f",  type=FileType("r", encoding="utf-8"))
     arg_file = parser.parse_args().f
 
-    seeds: list[int] = arg_file.readline().strip().split(sep=":", maxsplit=1)[1].strip()
+    seeds: list[int] = (
+        arg_file
+        .readline()
+        .split(sep=":", maxsplit=1)[1]
+        .split()
+    )
 
     # skips first blank line because yeah
     arg_file.readline()
