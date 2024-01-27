@@ -2,7 +2,7 @@ from sys import exit
 from re import search, Match
 from argparse import ArgumentParser, FileType
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from pprint import PrettyPrinter
 pp = PrettyPrinter(2, 1)
@@ -17,6 +17,14 @@ class Category(BaseModel):
     source: list
     range: list
 
+    @property
+    def calc_new_d(self):
+        rc: list[int] = []
+
+        for new_d in self.destination:
+            for range in self.range:
+                rc.append((int(new_d) + int(range)))
+        return rc
 
 
 
@@ -46,26 +54,29 @@ def get_file_data_from_args():
     for raw_line in arg_file:
         line: str = raw_line.strip()
 
-        is_title: Match = search(pattern=r"^([a-z]+-){2}[a-z]+ map:$", string=line)
+        is_title: Match = search(pattern=r"^([a-z]+-){2}[a-z]+ map:$",
+                                 string=line)
         if is_title:
-            name: str = is_title.string.split()[0].strip()
-            # print(f"{name=}")
+            name: str = (
+                is_title
+                .string
+                .split()[0]
+                .strip()
+            )
 
-        location: Match = search(pattern=r"^(\d+) (\d+) (\d+)$", string=line)
+        location: Match = search(pattern=r"^(\d+) (\d+) (\d+)$",
+                                 string=line)
         if location:
-            # print(f"{location.group(1)} - {location.group(2)} - {location.group(3)}")
             dest.append(location.group(1))
             src.append(location.group(2))
             rng.append(location.group(3))
 
         if 0 == len(line):
-            category = Category(
-                id=cat_id,
-                category_name=name,
-                destination=dest,
-                source=src,
-                range=rng,
-            )
+            category = Category(id=cat_id,
+                                category_name=name,
+                                destination=dest,
+                                source=src,
+                                range=rng)
             data.append(category)
 
             # loop vars
@@ -73,24 +84,22 @@ def get_file_data_from_args():
             dest = []
             src = []
             rng = []
-    data.append(
-        Category(
-            id=cat_id,
-            category_name=name,
-            destination=dest,
-            source=src,
-            range=rng,
-        ),
-    )
+    data.append(Category(id=cat_id,
+                         category_name=name,
+                         destination=dest,
+                         source=src,
+                         range=rng))
 
     return seeds, data
 
 
 def main():
     seeds, data = get_file_data_from_args()
-    pp.pprint(seeds)
-    pp.pprint(data)
+    # pp.pprint(seeds)
+    # pp.pprint(data)
 
+    for d in data:
+        print(d.calc_new_d)
 
     print(f"\n\n***End of Processing***\n")
     return exit(0)
