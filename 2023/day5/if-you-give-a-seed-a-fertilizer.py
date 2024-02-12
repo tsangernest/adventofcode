@@ -1,7 +1,6 @@
-from sys import exit
-from re import search, Match
-from argparse import ArgumentParser, FileType
-
+import sys
+import re
+import argparse
 from pydantic import BaseModel
 
 from pprint import PrettyPrinter
@@ -18,7 +17,7 @@ class Category(BaseModel):
     range: list
 
     @property
-    def calc_new_d(self):
+    def calc_new_d(self) -> list:
         rc: list[int] = []
 
         for new_d in self.destination:
@@ -31,8 +30,8 @@ class Category(BaseModel):
 def get_file_data_from_args():
     data: list[Category] = []
 
-    parser: ArgumentParser = ArgumentParser()
-    parser.add_argument("f",  type=FileType("r", encoding="utf-8"))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("f",  type=argparse.FileType("r", encoding="utf-8"))
     arg_file = parser.parse_args().f
 
     seeds: list[int] = (
@@ -54,8 +53,8 @@ def get_file_data_from_args():
     for raw_line in arg_file:
         line: str = raw_line.strip()
 
-        is_title: Match = search(pattern=r"^([a-z]+-){2}[a-z]+ map:$",
-                                 string=line)
+        is_title = re.search(pattern=r"^([a-z]+-){2}[a-z]+ map:$",
+                             string=line)
         if is_title:
             name: str = (
                 is_title
@@ -64,8 +63,8 @@ def get_file_data_from_args():
                 .strip()
             )
 
-        location: Match = search(pattern=r"^(\d+) (\d+) (\d+)$",
-                                 string=line)
+        location = re.search(pattern=r"^(\d+) (\d+) (\d+)$",
+                             string=line)
         if location:
             dest.append(location.group(1))
             src.append(location.group(2))
@@ -102,7 +101,7 @@ def main():
         print(d.calc_new_d)
 
     print(f"\n\n***End of Processing***\n")
-    return exit(0)
+    return sys.exit(0)
 
 
 if __name__ == "__main__":
