@@ -1,0 +1,5 @@
+.venv/
+.idea/
+__pycache__/
+
+/day*/part_1_input.txt
