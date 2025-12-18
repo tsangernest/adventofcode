@@ -21,6 +21,7 @@ def main():
                 sub_total.append(math.prod(line))
             else:   # "+" == operand
                 sub_total.append(sum(line))
+
         print(sum(sub_total))
 
 

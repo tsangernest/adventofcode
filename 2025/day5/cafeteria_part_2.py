@@ -21,6 +21,8 @@ def main():
         for low, high in pairs:
             total += high - low + 1
 
+        print(total)
+
 
 if __name__ == "__main__":
     main()
